@@ -6,6 +6,7 @@ import LocalAuthentication
 public protocol PasswordInputCompleteProtocol: class {
     func passwordInputComplete(_ passwordContainerView: PasswordContainerView, input: String)
     func touchAuthenticationComplete(_ passwordContainerView: PasswordContainerView, success: Bool, error: Error?)
+    func onCancel(_ passwordContainerView: PasswordContainerView)
 }
 
 open class PasswordContainerView: UIView {
@@ -15,6 +16,12 @@ open class PasswordContainerView: UIView {
     @IBOutlet open weak var passwordDotView: PasswordDotView!
     @IBOutlet weak var deleteButton: UIButton!
     @IBOutlet weak var touchAuthenticationButton: UIButton!
+
+    @IBInspectable
+    open var deleteString: String = "Delete"
+
+    @IBInspectable
+    open var cancelString: String = "Cancel"
     
     //MARK: Property
     open weak var delegate: PasswordInputCompleteProtocol?
@@ -24,6 +31,11 @@ open class PasswordContainerView: UIView {
         didSet {
             passwordDotView.inputDotCount = inputString.characters.count
             checkInputComplete()
+            if inputString == "" {
+                deleteButton.setTitle(cancelString, for: .normal)
+            } else {
+                deleteButton.setTitle(deleteString, for: .normal)
+            }
         }
     }
     
@@ -123,6 +135,7 @@ open class PasswordContainerView: UIView {
         passwordInputViews.forEach {
             $0.delegate = self
         }
+        deleteButton.setTitle(cancelString, for: .normal)
         deleteButton.titleLabel?.adjustsFontSizeToFitWidth = true
         deleteButton.titleLabel?.minimumScaleFactor = 0.5
         touchAuthenticationEnabled = true
@@ -144,10 +157,11 @@ open class PasswordContainerView: UIView {
     
     //MARK: IBAction
     @IBAction func deleteInputString(_ sender: AnyObject) {
-        guard inputString.characters.count > 0 && !passwordDotView.isFull else {
-            return
+        if inputString.characters.count == 0 {
+            delegate?.onCancel(self)
+        } else if inputString.characters.count > 0 && !passwordDotView.isFull {
+            inputString = String(inputString.characters.dropLast())
         }
-        inputString = String(inputString.characters.dropLast())
     }
     
     @IBAction func touchAuthenticationAction(_ sender: UIButton) {
