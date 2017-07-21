@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import SmileLock
 
 class PasswordModel {
-    class func match(password: String) -> PasswordModel? {
+    class func match(_ password: String) -> PasswordModel? {
         guard password == "123456" else { return nil }
         return PasswordModel()
     }
@@ -24,7 +25,7 @@ class PasswordValidator: PasswordUIValidation<PasswordModel> {
     }
     
     //handle Touch ID
-    override func touchAuthenticationComplete(passwordContainerView: PasswordContainerView, success: Bool, error: NSError?) {
+    override func touchAuthenticationComplete(_ passwordContainerView: PasswordContainerView, success: Bool, error: Error?) {
         if success {
             let dummyModel = PasswordModel()
             self.success?(dummyModel)

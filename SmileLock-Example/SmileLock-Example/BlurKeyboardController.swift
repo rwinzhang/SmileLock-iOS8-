@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SmileLock
 
 class BlurKeyboardController: UIViewController {
     
@@ -23,7 +24,7 @@ class BlurKeyboardController: UIViewController {
         
         passwordUIValidator.success = { [weak self] _ in
             print("*️⃣ success!")
-            self?.dismissViewControllerAnimated(true, completion: nil)
+            self?.dismiss(animated: true, completion: nil)
         }
         
         passwordUIValidator.failure = { _ in

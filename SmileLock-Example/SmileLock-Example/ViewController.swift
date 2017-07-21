@@ -16,25 +16,26 @@ class ViewController: UIViewController {
         super.viewDidLoad()
     }
     
-    @IBAction func setToShowBlurVersion(sender: UISwitch) {
-        if sender.on {
+    @IBAction func setToShowBlurVersion(_ sender: UISwitch) {
+        if sender.isOn {
             showBlurKeyboard = true
         } else {
             showBlurKeyboard = false
         }
     }
     
-    @IBAction func showKeyboardTapped(sender: UIButton) {
+    @IBAction func showKeyboardTapped(_ sender: UIButton) {
         let keyboardID = showBlurKeyboard ? "BlurKeyboardController" : "KeyboardController"
         present(keyboardID)
     }
     
-    func present(id: String) {
-        
-        let keyboardVC = storyboard?.instantiateViewControllerWithIdentifier(id)
-        keyboardVC?.modalTransitionStyle = .CrossDissolve
-        keyboardVC?.modalPresentationStyle = .OverCurrentContext
-        presentViewController(keyboardVC!, animated: true, completion: nil)
+    func present(_ id: String) {
+        guard let storyboard = storyboard else { return }
+
+        let keyboardVC = storyboard.instantiateViewController(withIdentifier: id)
+        keyboardVC.modalTransitionStyle = .crossDissolve
+        keyboardVC.modalPresentationStyle = .overCurrentContext
+        present(keyboardVC, animated: true, completion: nil)
     }
     
 }

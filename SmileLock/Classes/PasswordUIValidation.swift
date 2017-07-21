@@ -2,17 +2,17 @@
 
 import UIKit
 
-public class PasswordUIValidation<T>: PasswordInputCompleteProtocol {
+open class PasswordUIValidation<T>: PasswordInputCompleteProtocol {
     public typealias Failure    = (Void) -> Void
     public typealias Success    = (T) -> Void
     public typealias Validation = (String) -> T?
     
-    public var failure: Failure?
-    public var success: Success?
+    open var failure: Failure?
+    open var success: Success?
     
-    public var validation: Validation?
+    open var validation: Validation?
     
-    public var view: PasswordContainerView!
+    open var view: PasswordContainerView!
     
     public init(in containerView: UIView, width: CGFloat? = nil, digit: Int) {
         view = PasswordContainerView.create(in: containerView, digit: digit)
@@ -21,12 +21,12 @@ public class PasswordUIValidation<T>: PasswordInputCompleteProtocol {
         view.width = width
     }
     
-    public func resetUI() {
+    open func resetUI() {
         view.clearInput()
     }
     
     //MARK: PasswordInputCompleteProtocol
-    public func passwordInputComplete(passwordContainerView: PasswordContainerView, input: String) {
+    open func passwordInputComplete(_ passwordContainerView: PasswordContainerView, input: String) {
         guard let model = self.validation?(input) else {
             passwordContainerView.wrongPassword()
             failure?()
@@ -35,5 +35,5 @@ public class PasswordUIValidation<T>: PasswordInputCompleteProtocol {
         success?(model)
     }
     
-    public func touchAuthenticationComplete(passwordContainerView: PasswordContainerView, success: Bool, error: NSError?) {}
+    open func touchAuthenticationComplete(_ passwordContainerView: PasswordContainerView, success: Bool, error: Error?) {}
 }

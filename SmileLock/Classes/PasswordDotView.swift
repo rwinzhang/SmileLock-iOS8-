@@ -3,53 +3,53 @@
 import UIKit
 
 @IBDesignable
-public class PasswordDotView: UIView {
+open class PasswordDotView: UIView {
     
     //MARK: Property
     @IBInspectable
-    public var inputDotCount = 0 {
+    open var inputDotCount = 0 {
         didSet {
             setNeedsDisplay()
         }
     }
     
     @IBInspectable
-    public var totalDotCount = 6 {
+    open var totalDotCount = 6 {
         didSet {
             setNeedsDisplay()
         }
     }
     
     @IBInspectable
-    public var strokeColor = UIColor.darkGrayColor() {
+    open var strokeColor = UIColor.darkGray {
         didSet {
             setNeedsDisplay()
         }
     }
     
     @IBInspectable
-    public var fillColor = UIColor.grayColor() {
+    open var fillColor = UIColor.gray {
         didSet {
             setNeedsDisplay()
         }
     }
 
-    private var radius: CGFloat = 6
-    private let spacingRatio: CGFloat = 2
-    private let borderWidthRatio: CGFloat = 1 / 5
+    fileprivate var radius: CGFloat = 6
+    fileprivate let spacingRatio: CGFloat = 2
+    fileprivate let borderWidthRatio: CGFloat = 1 / 5
     
-    private(set) public var isFull = false
+    fileprivate(set) open var isFull = false
     
     //MARK: Draw
-    public override func drawRect(rect: CGRect) {
-        super.drawRect(rect)
+    open override func draw(_ rect: CGRect) {
+        super.draw(rect)
         isFull = (inputDotCount == totalDotCount)
         strokeColor.setStroke()
         fillColor.setFill()
         let isOdd = (totalDotCount % 2) != 0
         let positions = getDotPositions(isOdd)
         let borderWidth = radius * borderWidthRatio
-        for (index, position) in positions.enumerate() {
+        for (index, position) in positions.enumerated() {
             if index < inputDotCount {
                 let pathToFill = UIBezierPath(circleWithCenter: position, radius: (radius + borderWidth / 2), lineWidth: borderWidth)
                 pathToFill.fill()
@@ -61,20 +61,20 @@ public class PasswordDotView: UIView {
     }
     
     //MARK: LifeCycle
-    public override func awakeFromNib() {
+    open override func awakeFromNib() {
         super.awakeFromNib()
-        backgroundColor = UIColor.clearColor()
+        backgroundColor = UIColor.clear
     }
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         updateRadius()
         setNeedsDisplay()
     }
     
     //MARK: Animation
-    private var shakeCount = 0
-    private var direction = false
-    public func shakeAnimationWithCompletion(completion: () -> Void) {
+    fileprivate var shakeCount = 0
+    fileprivate var direction = false
+    open func shakeAnimationWithCompletion(_ completion: @escaping () -> Void) {
         let maxShakeCount = 5
         let centerX = bounds.midX
         let centerY = bounds.midY
@@ -113,8 +113,8 @@ public class PasswordDotView: UIView {
 
 private extension PasswordDotView {
     //MARK: Animation
-    func shakeAnimation(withDuration duration: NSTimeInterval, animations: () -> Void, completion: () -> Void) {
-        UIView.animateWithDuration(duration, delay: 0, usingSpringWithDamping: 0.01, initialSpringVelocity: 0.35, options: UIViewAnimationOptions(), animations: {
+    func shakeAnimation(withDuration duration: TimeInterval, animations: @escaping () -> Void, completion: @escaping () -> Void) {
+        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 0.01, initialSpringVelocity: 0.35, options: UIViewAnimationOptions(), animations: {
             animations()
         }) { (_) in
             completion()
@@ -138,7 +138,7 @@ private extension PasswordDotView {
     }
 
     //MARK: Dots Layout
-    func getDotPositions(isOdd: Bool) -> [CGPoint] {
+    func getDotPositions(_ isOdd: Bool) -> [CGPoint] {
         let centerX = bounds.midX
         let centerY = bounds.midY
         let spacing = radius * spacingRatio
@@ -155,7 +155,7 @@ private extension PasswordDotView {
 
 internal extension UIBezierPath {
     convenience init(circleWithCenter center: CGPoint, radius: CGFloat, lineWidth: CGFloat) {
-        self.init(arcCenter: center, radius: radius, startAngle: 0, endAngle: 2.0 * CGFloat(M_PI), clockwise: false)
+        self.init(arcCenter: center, radius: radius, startAngle: 0, endAngle: 2.0 * CGFloat(Double.pi), clockwise: false)
         self.lineWidth = lineWidth
     }
 }

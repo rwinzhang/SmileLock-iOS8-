@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SmileLock
 
 class KeyboardController: UIViewController {
     
@@ -22,7 +23,7 @@ class KeyboardController: UIViewController {
         passwordUIValidator = PasswordValidator(in: keyboardContainer, digit: kPasswordDigit)
         passwordUIValidator.success = { [weak self] _ in
             print("*️⃣ success!")
-            self?.dismissViewControllerAnimated(true, completion: nil)
+            self?.dismiss(animated: true, completion: nil)
         }
         
         passwordUIValidator.failure = { _ in

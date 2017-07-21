@@ -9,10 +9,10 @@
 import Foundation
 import UIKit
 
-public class RLHelper: NSObject {
+open class RLHelper: NSObject {
     
     /// Convert NSObject array to String array. i.e.: [1,2,3]->['1','2','3']
-    class func bridgeObjToStringArray(array: [NSObject]) -> [String?] {
+    class func bridgeObjToStringArray(_ array: [NSObject]) -> [String?] {
         var newArray = [String?]()
         for object in array
         {

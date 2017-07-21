@@ -40,16 +40,16 @@ public extension Double {
 public extension String {
     
     /// Trim white space and Newline character for string
-    public var trim : String { return self.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) }
+    public var trim : String { return self.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) }
     
     /// Regex match
     ///
     /// - parameter strRegex: the regex in string
-    func matches(regex: String) -> Bool {
+    func matches(_ regex: String) -> Bool {
         
-        let regex = try! NSRegularExpression(pattern: regex, options: .DotMatchesLineSeparators)
+        let regex = try! NSRegularExpression(pattern: regex, options: .dotMatchesLineSeparators)
         
-        return regex.numberOfMatchesInString(self, options: .ReportCompletion, range: NSMakeRange(0, self.characters.count-1)) > 0 ? true : false
+        return regex.numberOfMatches(in: self, options: .reportCompletion, range: NSMakeRange(0, self.characters.count-1)) > 0 ? true : false
         
     }
     
@@ -57,62 +57,62 @@ public extension String {
     ///
     /// - parameter str: catch string start at
     /// - parameter include: whether to include the start string
-    func subFrom(str: String, include: Bool) -> String {
+    func subFrom(_ str: String, include: Bool) -> String {
         
         if str == "" {
             return self
         }
         
-        let range = self.rangeOfString(str)!
+        let range = self.range(of: str)!
         
-        return include ? self.substringFromIndex(range.startIndex) : self.substringFromIndex(range.endIndex)
+        return include ? self.substring(from: range.lowerBound) : self.substring(from: range.upperBound)
     }
     
     /// Catch a string
     ///
     /// - parameter str: catch string end at
     /// - parameter include: whether to include the end string
-    func subTo(str: String, include: Bool) -> String {
+    func subTo(_ str: String, include: Bool) -> String {
         
         if str == "" {
             return self
         }
         
-        let range = self.rangeOfString(str)!
+        let range = self.range(of: str)!
         
-        return include ? self.substringToIndex(range.endIndex) : self.substringToIndex(range.startIndex)
+        return include ? self.substring(to: range.upperBound) : self.substring(to: range.lowerBound)
     }
 }
 
-public extension NSDate {
+public extension Date {
    
     func year() -> Int {
-        return NSCalendar.currentCalendar().component(.Year, fromDate: self)
+        return (Calendar.current as NSCalendar).component(.year, from: self)
     }
     
     func month() -> Int {
-        return NSCalendar.currentCalendar().component(.Month, fromDate: self)
+        return (Calendar.current as NSCalendar).component(.month, from: self)
     }
     
     func day() -> Int {
-        return NSCalendar.currentCalendar().component(.Day, fromDate: self)
+        return (Calendar.current as NSCalendar).component(.day, from: self)
     }
     
     func hour() -> Int {
-        return NSCalendar.currentCalendar().component(.Hour, fromDate: self)
+        return (Calendar.current as NSCalendar).component(.hour, from: self)
     }
     
     func minute() -> Int {
-        return NSCalendar.currentCalendar().component(.Minute, fromDate: self)
+        return (Calendar.current as NSCalendar).component(.minute, from: self)
     }
     
     func second() -> Int {
-        return NSCalendar.currentCalendar().component(.Second, fromDate: self)
+        return (Calendar.current as NSCalendar).component(.second, from: self)
     }
     
     /// 1: Sunday ... 7: Saturday
     func weekday() -> Int {
-        return NSCalendar.currentCalendar().component(.Weekday, fromDate: self)
+        return (Calendar.current as NSCalendar).component(.weekday, from: self)
     }
     
     /// Format date to string: yyyy-MM-dd
@@ -120,17 +120,17 @@ public extension NSDate {
         
         var strDate = self.description
         
-        var dateFormatter: NSDateFormatter?
+        var dateFormatter: DateFormatter?
         
         if dateFormatter == nil {
             
-            dateFormatter = NSDateFormatter()
+            dateFormatter = DateFormatter()
             dateFormatter?.dateFormat = "yyyy-MM-dd"
-            dateFormatter?.locale = NSLocale.currentLocale()
+            dateFormatter?.locale = Locale.current
             
         }
         
-        strDate = dateFormatter!.stringFromDate(self)
+        strDate = dateFormatter!.string(from: self)
         
         return strDate
     }
@@ -140,17 +140,17 @@ public extension NSDate {
         
         var stringMinute = self.description
         
-        var dateFormatter: NSDateFormatter?
+        var dateFormatter: DateFormatter?
         
         if dateFormatter == nil {
             
-            dateFormatter = NSDateFormatter()
+            dateFormatter = DateFormatter()
             dateFormatter?.dateFormat = "HH:mm"
-            dateFormatter?.locale = NSLocale.currentLocale()
+            dateFormatter?.locale = Locale.current
             
         }
         
-        stringMinute = dateFormatter!.stringFromDate(self)
+        stringMinute = dateFormatter!.string(from: self)
         
         return stringMinute
     }
@@ -160,17 +160,17 @@ public extension NSDate {
         
         var strDate = self.description
         
-        var dateFormatter: NSDateFormatter?
+        var dateFormatter: DateFormatter?
         
         if dateFormatter == nil {
             
-            dateFormatter = NSDateFormatter()
+            dateFormatter = DateFormatter()
             dateFormatter?.dateFormat = "yyyy-MM-dd HH:mm"
-            dateFormatter?.locale = NSLocale.currentLocale()
+            dateFormatter?.locale = Locale.current
             
         }
         
-        strDate = dateFormatter!.stringFromDate(self)
+        strDate = dateFormatter!.string(from: self)
         
         return strDate
     }
@@ -180,17 +180,17 @@ public extension NSDate {
         
         var strDate = self.description
         
-        var dateFormatter: NSDateFormatter?
+        var dateFormatter: DateFormatter?
         
         if dateFormatter == nil {
             
-            dateFormatter = NSDateFormatter()
+            dateFormatter = DateFormatter()
             dateFormatter?.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            dateFormatter?.locale = NSLocale.currentLocale()
+            dateFormatter?.locale = Locale.current
             
         }
         
-        strDate = dateFormatter!.stringFromDate(self)
+        strDate = dateFormatter!.string(from: self)
         
         return strDate
     }
@@ -200,37 +200,37 @@ public extension NSDate {
         
         var strDate = self.description
         
-        var dateFormatter: NSDateFormatter?
+        var dateFormatter: DateFormatter?
         
         if dateFormatter == nil {
             
-            dateFormatter = NSDateFormatter()
+            dateFormatter = DateFormatter()
             dateFormatter?.dateFormat = "yyyy-MM-dd HHmmss"
-            dateFormatter?.locale = NSLocale.currentLocale()
+            dateFormatter?.locale = Locale.current
             
         }
         
-        strDate = dateFormatter!.stringFromDate(self)
+        strDate = dateFormatter!.string(from: self)
         
         return strDate
     }
     
     /// Format date to string as format
-    func stringDateByStringFormat(format: String) -> String {
+    func stringDateByStringFormat(_ format: String) -> String {
         
         var strDate = self.description
         
-        var dateFormatter: NSDateFormatter?
+        var dateFormatter: DateFormatter?
         
         if dateFormatter == nil {
             
-            dateFormatter = NSDateFormatter()
+            dateFormatter = DateFormatter()
             dateFormatter?.dateFormat = format
-            dateFormatter?.locale = NSLocale.currentLocale()
+            dateFormatter?.locale = Locale.current
             
         }
         
-        strDate = dateFormatter!.stringFromDate(self)
+        strDate = dateFormatter!.string(from: self)
         
         return strDate
     }

@@ -16,9 +16,9 @@ public extension UIColor {
     }
     
     convenience init(hexString: String, alpha: Double = 1.0) {
-        let hex = hexString.stringByTrimmingCharactersInSet(NSCharacterSet.alphanumericCharacterSet().invertedSet)
+        let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int = UInt32()
-        NSScanner(string: hex).scanHexInt(&int)
+        Scanner(string: hex).scanHexInt32(&int)
         let r, g, b: UInt32
         switch hex.characters.count {
         case 3: // RGB (12-bit)
@@ -40,11 +40,11 @@ public extension UIImage {
     /// - returns: image of screenshot
     public var screenShot: UIImage {
     
-        let window = UIApplication.sharedApplication().keyWindow
+        let window = UIApplication.shared.keyWindow
         
-        if UIScreen.mainScreen().respondsToSelector(#selector(NSDecimalNumberBehaviors.scale)) {
+        if UIScreen.main.responds(to: #selector(NSDecimalNumberBehaviors.scale)) {
         
-            UIGraphicsBeginImageContextWithOptions(window!.bounds.size, false, UIScreen.mainScreen().scale)
+            UIGraphicsBeginImageContextWithOptions(window!.bounds.size, false, UIScreen.main.scale)
         
         } else {
         
@@ -52,13 +52,13 @@ public extension UIImage {
         
         }
         
-        window?.layer.renderInContext(UIGraphicsGetCurrentContext()!)
+        window?.layer.render(in: UIGraphicsGetCurrentContext()!)
         
         let image = UIGraphicsGetImageFromCurrentImageContext()
         
         UIGraphicsEndImageContext()
         
-        return image
+        return image!
     }
     
     /// To make the image always up
@@ -68,45 +68,45 @@ public extension UIImage {
         
         var image = self
         
-        if self.imageOrientation != .Up {
+        if self.imageOrientation != .up {
             
-            var transform = CGAffineTransformIdentity
+            var transform = CGAffineTransform.identity
             
             switch self.imageOrientation {
-            case .Down, .DownMirrored:
-                transform = CGAffineTransformTranslate(transform, self.size.width, self.size.height)
-                transform = CGAffineTransformRotate(transform, CGFloat(M_PI))
-            case .Left, .LeftMirrored:
-                transform = CGAffineTransformTranslate(transform, self.size.width, 0)
-                transform = CGAffineTransformRotate(transform, CGFloat(M_PI_2))
-            case .Right, .RightMirrored:
-                transform = CGAffineTransformTranslate(transform, 0, self.size.height)
-                transform = CGAffineTransformRotate(transform, -CGFloat(M_PI_2))
+            case .down, .downMirrored:
+                transform = transform.translatedBy(x: self.size.width, y: self.size.height)
+                transform = transform.rotated(by: CGFloat(Double.pi))
+            case .left, .leftMirrored:
+                transform = transform.translatedBy(x: self.size.width, y: 0)
+                transform = transform.rotated(by: CGFloat(Double.pi))
+            case .right, .rightMirrored:
+                transform = transform.translatedBy(x: 0, y: self.size.height)
+                transform = transform.rotated(by: -CGFloat(Double.pi))
             default:
                 break
             }
             
             switch self.imageOrientation {
-            case .UpMirrored, .DownMirrored:
-                transform = CGAffineTransformTranslate(transform, self.size.width, 0)
-                transform = CGAffineTransformScale(transform, -1, 1)
-            case .RightMirrored, .LeftMirrored:
-                transform = CGAffineTransformTranslate(transform, self.size.height, 0)
-                transform = CGAffineTransformScale(transform, -1, 1)
+            case .upMirrored, .downMirrored:
+                transform = transform.translatedBy(x: self.size.width, y: 0)
+                transform = transform.scaledBy(x: -1, y: 1)
+            case .rightMirrored, .leftMirrored:
+                transform = transform.translatedBy(x: self.size.height, y: 0)
+                transform = transform.scaledBy(x: -1, y: 1)
             default:
                 break
             }
             
-            let ctx = CGBitmapContextCreate(nil, Int(self.size.width), Int(self.size.height),
-                                            CGImageGetBitsPerComponent(self.CGImage), 0,
-                                            CGImageGetColorSpace(self.CGImage),
-                                            CGImageGetBitmapInfo(self.CGImage).rawValue)
+            let ctx = CGContext(data: nil, width: Int(self.size.width), height: Int(self.size.height),
+                                            bitsPerComponent: (self.cgImage?.bitsPerComponent)!, bytesPerRow: 0,
+                                            space: (self.cgImage?.colorSpace!)!,
+                                            bitmapInfo: (self.cgImage?.bitmapInfo.rawValue)!)
             
-            CGContextConcatCTM(ctx, transform)
+            ctx?.concatenate(transform)
             
-            CGContextDrawImage(ctx, CGRectMake(0,0,self.size.width,self.size.height), self.CGImage)
+            ctx?.draw(self.cgImage!, in: CGRect(x: 0,y: 0,width: self.size.width,height: self.size.height))
             
-            image = UIImage(CGImage: CGBitmapContextCreateImage(ctx)!)
+            image = UIImage(cgImage: (ctx?.makeImage()!)!)
             
         }
         
@@ -121,7 +121,7 @@ public extension UIView {
     public var parentViewController: UIViewController? {
         var parentResponder: UIResponder? = self
         while parentResponder != nil {
-            parentResponder = parentResponder!.nextResponder()
+            parentResponder = parentResponder!.next
             if let viewController = parentResponder as? UIViewController {
                 return viewController
             }
@@ -130,21 +130,21 @@ public extension UIView {
     }
     
     class func fromNib<T : UIView>() -> T {
-        return NSBundle.mainBundle().loadNibNamed(String(T), owner: nil, options: nil)[0] as! T
+        return Bundle.main.loadNibNamed(String(describing: T.self), owner: nil, options: nil)![0] as! T
     }
 }
 
 public extension UIViewController {
     
-    func showNotifyAlert(title: String, message: String?) {
+    func showNotifyAlert(_ title: String, message: String?) {
         
-        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert )
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert )
         
-        let yesAction = UIAlertAction(title: "确认", style: .Default, handler: nil)
+        let yesAction = UIAlertAction(title: "确认", style: .default, handler: nil)
         
         alert.addAction(yesAction)
         
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
 }
